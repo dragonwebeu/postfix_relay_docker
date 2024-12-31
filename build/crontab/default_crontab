@@ -1,0 +1,13 @@
+SHELL=/bin/bash
+MAILTO="no-reply@dragonweb.eu"
+FROM="no-reply@dragonweb.eu"
+
+#Limit time when emails are sent
+## Stop sending emails from 22:00
+# 00 22 * * * /usr/sbin/postconf -e defer_transports=smtp; /usr/sbin/postfix reload
+## Start sending emails from 8:00 Monday-Friday
+# 00 08 * * 1-5 /usr/sbin/postconf -e defer_transports=; /usr/sbin/postfix reload; /usr/sbin/postfix flush
+## Start sending emails from 09:00 Saturday-Sunday
+# 00 09 * * 6,0 /usr/sbin/postconf -e defer_transports=; /usr/sbin/postfix reload; /usr/sbin/postfix flush
+# Daily updates abut sent e-emails
+59 23 * * * /usr/sbin/pflogsumm -d today /var/log/mail.log | mail -a "From: $FROM" -s "Postfix `hostname` report of `date`" $MAILTO

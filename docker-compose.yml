@@ -1,0 +1,26 @@
+# If you use older Docker version comment back in
+#version: "3.8"
+x-logging:
+  &default-logging
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "10"
+services:
+  ee:
+    image: mail_server:latest
+    env_file: ./build/.env
+    build: .
+    restart: always
+    hostname: mail_ee
+    ports:
+      - "25:25"
+    volumes:
+      - ./ee/pool/:/var/spool/postfix
+      - ./ee/logs:/var/log/
+      - ./ee/mail:/var/mail
+      - ./ee/opendkim:/etc/opendkim
+      # change to - ./ee/ssl:/ssl if you want country specfic
+      # Shared SSL-s
+      - ./ssl:/ssl
+    logging: *default-logging
